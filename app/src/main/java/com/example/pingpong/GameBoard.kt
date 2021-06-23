@@ -1,6 +1,8 @@
 package com.example.pingpong
 
+import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -9,6 +11,8 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.res.TypedArrayUtils.getString
+import kotlin.random.Random
 
 /**
  * TODO: document your custom view class.
@@ -18,6 +22,7 @@ class GameBoard : View {
     private val paintGameBoard:Paint = Paint()
     private val paintBandP:Paint = Paint()
     private val paintScoreText:Paint = Paint()
+    private val paintHighScoreText:Paint = Paint()
 
     private val PADDLE_WIDTH = 200F
     private val PADDLE_HEIGHT = 50F
@@ -38,37 +43,56 @@ class GameBoard : View {
     private var mWidth = 0
     private var mHeight = 0
 
+    private var mAllTimeHighScore=0
+
+    lateinit var hsPref:SharedPreferences
+
 
     constructor (context:Context) : super(context) {
-        init(null)
+        init(null, context)
     }
 
     constructor (context:Context, attrs:AttributeSet) : super(context, attrs)
     {
-        init(attrs)
+        init(attrs, context)
     }
 
-    private fun init(attrs: AttributeSet?) {
-        // Load attributes
+    private fun init(attrs: AttributeSet?, context: Context) {
         paintGameBoard.color = Color.BLACK
         paintBandP.color = Color.WHITE
         paintScoreText.color = Color.WHITE
+        paintHighScoreText.color = Color.CYAN
 
         paintGameBoard.style = Paint.Style.FILL
         paintBandP.style = Paint.Style.FILL
 
         paintScoreText.style = Paint.Style.STROKE
-        paintScoreText.textSize=100F
+        paintScoreText.textSize = 100F
+        paintHighScoreText.style = Paint.Style.FILL_AND_STROKE
+        paintHighScoreText.textSize = 100F
+
+        hsPref = context.getSharedPreferences((R.string.HighScoreKey).toString(), Context.MODE_PRIVATE)
+        if (hsPref.contains((R.string.HighScore).toString()) == false) {
+            with(hsPref.edit()) {
+                putInt((R.string.HighScore).toString(), 0)
+                apply()
+                commit()
+            }
+        }
+
+        mAllTimeHighScore = hsPref.getInt((R.string.HighScore).toString(),0)
+
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         mWidth = width
         mHeight = height
-        cxBall = (width/2).toFloat()
-        cyBall = (height/6).toFloat()
+        cxBall = (Random.nextInt(1, mWidth)).toFloat()
+        cyBall = (mHeight/6).toFloat()
         cxPaddle = (width/2 - PADDLE_WIDTH/2).toFloat()
         paintScoreText.textSize = height / 20f
+        paintHighScoreText.textSize = height / 20f
 
         gameOn = true
         start()
@@ -89,6 +113,7 @@ class GameBoard : View {
         canvas?.drawCircle(cxBall, cyBall, cRadius, paintBandP)
 
         canvas?.drawText(score.toString(), 20f, height / 20 - 10f, paintScoreText)
+        canvas?.drawText("High Score:$mAllTimeHighScore", 400f, height/20 - 10f, paintHighScoreText)
         super.onDraw(canvas)
 
     }
@@ -131,13 +156,24 @@ class GameBoard : View {
 
 
         fun resetGame(){
-            cxBall = 100F
-            cyBall = 100F
+            if (score > mAllTimeHighScore) {
+                mAllTimeHighScore = score
+                with (hsPref.edit()) {
+                    putInt((R.string.HighScore).toString(), mAllTimeHighScore)
+                    apply()
+                }
+
+            }
+            cxBall = (Random.nextInt(1, mWidth)).toFloat()
+            cyBall = (mHeight/6).toFloat()
             mX = 10F
             mY = 10F
             score = 0
 
+
         }
+
+
 
     inner class GameThread : Thread()
     {
@@ -145,8 +181,8 @@ class GameBoard : View {
         {
             while (gameOn)
             {
-                cxBall += mX // x position of the center of the ball
-                cyBall += mY // y position of the center of the ball
+                cxBall += mX
+                cyBall += mY
 
                 // Handle of the touch of the background
                 if (cxBall > mWidth - cRadius) {
@@ -185,4 +221,4 @@ class GameBoard : View {
             }
         }
     }
-    }
+}

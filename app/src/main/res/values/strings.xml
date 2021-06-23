@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PingPong</string>
+    <string name="HighScoreKey">PingPong.HighScoreKey</string>
+    <string name="HighScore">PingPong.HighScore</string>
 </resources>
