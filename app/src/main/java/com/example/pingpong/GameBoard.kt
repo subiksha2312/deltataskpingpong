@@ -8,6 +8,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
+import android.media.SoundPool
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -22,6 +23,7 @@ import kotlin.random.Random
 /**
  * TODO: document your custom view class.
  */
+
 
 
 class GameBoard : View {
@@ -56,6 +58,10 @@ class GameBoard : View {
     private var mAllTimeHighScore=0
     private var score = 0
 
+    var level2 :Boolean = true
+    var level3 :Boolean = true
+    var level4 :Boolean = true
+
 
     lateinit var hsPref:SharedPreferences
 
@@ -78,7 +84,6 @@ class GameBoard : View {
         paintreplay.color = Color.BLACK
         paintreplaytext.color = Color.WHITE
 
-
         paintGameBoard.style = Paint.Style.FILL
         paintBandP.style = Paint.Style.FILL
         paintEndCard.style = Paint.Style.FILL
@@ -88,6 +93,7 @@ class GameBoard : View {
         paintHighScoreText.style = Paint.Style.FILL_AND_STROKE
         paintHighScoreText.textSize = 100F
         paintreplaytext.textSize = 50F
+
 
         hsPref = context.getSharedPreferences((R.string.HighScoreKey).toString(), Context.MODE_PRIVATE)
         if (hsPref.contains((R.string.HighScore).toString()) == false) {
@@ -235,7 +241,49 @@ class GameBoard : View {
 
         }
 
+    fun playpingpongHitSound(){
+        soundPoolBallHit.play(pingponghitSound,1f,1f,4,0,2f)
+    }
 
+    fun playpingpongFailSound(){
+        soundPoolFailure.play(failureSound,1f,1f,1,0,2f)
+    }
+
+    fun increaseVelocity() {
+        when {
+            score in 6..11 -> {
+                if (level2) {
+                    mX *= 1.5f
+                    mY *= 1.5f
+                    level2 = false
+                }
+            }
+            score in 12..15 -> {
+                if (level3) {
+                    mX *= 2.0f
+                    mY *= 2.0f
+                    level3 = false
+                }
+            }
+            score in 16..20 -> {
+                if (level4) {
+                    mX *= 2.3f
+                    mY *= 2.3f
+                    level4 = false
+                }
+            }
+            else -> {
+                mX *= 4.0f
+                mY *= 4.0f
+            }
+
+
+        }
+
+
+
+
+    }
 
 
     inner class GameThread : Thread()
@@ -248,35 +296,43 @@ class GameBoard : View {
                 cyBall += mY
 
                 // Handle of the touch of the background
-                if (cxBall > mWidth - cRadius) {
-
+                if (cxBall > mWidth - cRadius) { //ball hitting right side of screen
+                    playpingpongHitSound()
                     cxBall = mWidth - cRadius
                     mX *= -1
                 }
-                else if (cxBall < cRadius)
+                else if (cxBall < cRadius) // ball hitting left side of the screen
                 {
+                    playpingpongHitSound()
                     cxBall = cRadius
                     mX *= -1
                 }
 
                 if (cyBall >= mHeight - cRadius - PADDLE_HEIGHT)
                 {
-                    if (cxBall in cxPaddle..cxPaddle + PADDLE_WIDTH)
+                    if (cxBall in cxPaddle..cxPaddle + PADDLE_WIDTH) //hitting the paddle
                     {
+                        playpingpongHitSound()
                         cyBall = mHeight - cRadius - PADDLE_HEIGHT
                         mY *= -1
                     }
-                    else
+                    else   //losing the game
                     {
+                        playpingpongFailSound()
                         gameOn = false
                         gameEnd = true
                     }
                 }
-                else if (cyBall < cRadius)
+                else if (cyBall < cRadius)  //hitting top part of screen
                 {
+                    playpingpongHitSound()
                     cyBall = cRadius
                     mY *= -1
                     score++
+                    if (score > 5) {
+                        increaseVelocity()
+                    }
+
                 }
 
                 postInvalidate()
