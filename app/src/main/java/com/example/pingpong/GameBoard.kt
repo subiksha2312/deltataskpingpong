@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable
 import android.media.SoundPool
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -35,18 +36,22 @@ class GameBoard : View {
     private val paintEndCard: Paint = Paint()
     private val paintreplay: Paint =Paint()
     private val paintreplaytext: Paint=Paint()
+    private val paintpaddle2 :Paint = Paint()
 
     private val PADDLE_WIDTH = 200F
     private val PADDLE_HEIGHT = 50F
     private var cxPaddle = 0F
     private var cxTouch = 0F
+    private var cxSystempaddle = 0F
 
     private var cxBall = 100F
     private var cyBall = 100F
     private var cRadius = 30F
 
-    private var gameOn = false
+
     private var gameEnd = false
+    @Volatile var gameOn = false
+
 
     private var mX = 5F
     private var mY = 5F
@@ -62,20 +67,33 @@ class GameBoard : View {
     var level3 :Boolean = true
     var level4 :Boolean = true
 
+    var mMode : String =""
+
 
     lateinit var hsPref:SharedPreferences
 
 
     constructor (context:Context) : super(context) {
+
+        Log.d("constructor1","constructor1")
         init(null, context)
+
     }
 
     constructor (context:Context, attrs:AttributeSet) : super(context, attrs)
     {
+        Log.d("constructor2","constructor2")
         init(attrs, context)
+
+
     }
 
     private fun init(attrs: AttributeSet?, context: Context) {
+
+        val attributeArray = context.obtainStyledAttributes(attrs,R.styleable.GameBoard,0,0)
+        mMode = attributeArray.getString(R.styleable.GameBoard_gameMode)?:"easy"
+
+
         paintGameBoard.color = Color.BLACK
         paintBandP.color = Color.WHITE
         paintScoreText.color = Color.WHITE
@@ -83,10 +101,12 @@ class GameBoard : View {
         paintEndCard.color = Color.DKGRAY
         paintreplay.color = Color.BLACK
         paintreplaytext.color = Color.WHITE
+        paintpaddle2.color =Color.BLUE
 
         paintGameBoard.style = Paint.Style.FILL
         paintBandP.style = Paint.Style.FILL
         paintEndCard.style = Paint.Style.FILL
+        paintpaddle2.style = Paint.Style.FILL
 
         paintScoreText.style = Paint.Style.STROKE
         paintScoreText.textSize = 100F
@@ -117,28 +137,41 @@ class GameBoard : View {
         cxBall = (Random.nextInt(1, mWidth)).toFloat()
         cyBall = (mHeight/6).toFloat()
         cxPaddle = (width/2 - PADDLE_WIDTH/2).toFloat()
+        cxSystempaddle = (width/2 - PADDLE_WIDTH/2).toFloat()
         paintScoreText.textSize = height / 20f
         paintHighScoreText.textSize = height / 20f
 
-
+        Log.d("onsizechanged","starting thread")
         start()
+
 
     }
 
     override fun onDraw(canvas: Canvas) {
 
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paintGameBoard)
+        Log.d("mmode value","mmode value = $mMode")
 
+        if (mMode =="hard"){
+
+            canvas?.drawRect(
+                cxSystempaddle,
+                0f,
+                cxSystempaddle + PADDLE_WIDTH,
+                PADDLE_HEIGHT,paintpaddle2
+            )
+        }
 
         canvas?.drawRect(
             cxPaddle,
             (height - PADDLE_HEIGHT).toFloat(),
             cxPaddle + PADDLE_WIDTH,
-            height.toFloat(), paintBandP
-        )
+            height.toFloat(), paintBandP )
+
         canvas?.drawCircle(cxBall, cyBall, cRadius, paintBandP)
         canvas?.drawText(score.toString(), 20f, height / 20 - 10f, paintScoreText)
         canvas?.drawText("High Score:$mAllTimeHighScore", 400f, height/20 - 10f, paintHighScoreText)
+
 
         if(gameEnd == true){
             canvas?.drawRect(0f, (height/3).toFloat(), width.toFloat(), ((height/3)+300).toFloat(), paintEndCard)
@@ -277,25 +310,36 @@ class GameBoard : View {
                 mY *= 4.0f
             }
 
-
         }
 
-
-
-
     }
+
+    fun setMode(mode : String) {
+        mMode = mode
+    }
+
+
+
 
 
     inner class GameThread : Thread()
     {
         override fun run()
         {
+            Log.d("thread","starting thread")
             while (gameOn)
             {
+                Log.d("beginloop","thread execution $name")
                 cxBall += mX
                 cyBall += mY
+                if(mMode == "hard"){
+                    if(cyBall > 0f){
+                        cxSystempaddle =cxBall - PADDLE_WIDTH/2
 
-                // Handle of the touch of the background
+
+                    }
+                }
+                // Handling the touch of the background
                 if (cxBall > mWidth - cRadius) { //ball hitting right side of screen
                     playpingpongHitSound()
                     cxBall = mWidth - cRadius
@@ -308,9 +352,9 @@ class GameBoard : View {
                     mX *= -1
                 }
 
-                if (cyBall >= mHeight - cRadius - PADDLE_HEIGHT)
+                if (cyBall >= mHeight - cRadius + 10f - PADDLE_HEIGHT)
                 {
-                    if (cxBall in cxPaddle..cxPaddle + PADDLE_WIDTH) //hitting the paddle
+                    if (cxBall in (cxPaddle - cRadius)..(cxPaddle + PADDLE_WIDTH + cRadius)) //hitting the paddle
                     {
                         playpingpongHitSound()
                         cyBall = mHeight - cRadius - PADDLE_HEIGHT

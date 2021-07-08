@@ -1,4 +1,5 @@
 <resources>
     <declare-styleable name="GameBoard">
+        <attr name="gameMode" format="string" ></attr>
     </declare-styleable>
 </resources>
