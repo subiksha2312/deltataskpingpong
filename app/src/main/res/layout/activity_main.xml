@@ -33,18 +33,30 @@ tools:context=".easymode">
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_bias="0.536" />
 
-<Button
-    android:id="@+id/button2"
-    android:layout_width="204dp"
-    android:layout_height="69dp"
-    android:layout_marginTop="65dp"
-    android:layout_marginBottom="197dp"
-    android:text="Hard mode"
-    app:backgroundTint="#F39333"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.521"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/button1"
-    app:layout_constraintVertical_bias="1.0" />
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="204dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="37dp"
+        android:layout_marginBottom="120dp"
+        android:text="Hard mode"
+        app:backgroundTint="#F39333"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button3" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="204dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="30dp"
+        android:text="INTERMEDIATE MODE"
+        app:backgroundTint="#D3AF43"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button1" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PingPong">
-        <activity android:name=".hardmode"></activity>
+        <activity android:name=".intermediatemode"></activity>
+        <activity android:name=".hardmode" />
         <activity android:name=".easymode" />
         <activity android:name=".MainActivity">
             <intent-filter>

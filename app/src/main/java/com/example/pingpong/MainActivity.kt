@@ -31,28 +31,32 @@ class MainActivity : AppCompatActivity() {
             soundPoolBallHit = builder.build()
             soundPoolFailure = builder.build()
 
-        }
-        else {
+        } else {
             soundPoolBallHit = SoundPool(6, AudioManager.STREAM_MUSIC, 0)
             soundPoolFailure = SoundPool(6, AudioManager.STREAM_MUSIC, 0)
         }
 
 
-        pingponghitSound = soundPoolBallHit.load(this, R.raw.pingponghit,1)
-        failureSound = soundPoolFailure.load(this, R.raw.failbuzzer,1)
+        pingponghitSound = soundPoolBallHit.load(this, R.raw.pingponghit, 1)
+        failureSound = soundPoolFailure.load(this, R.raw.failbuzzer, 1)
 
 
-        val button1=findViewById<Button>(R.id.button1)
-        button1.setOnClickListener{
-            val intent= Intent(this,easymode::class.java)
+        val button1 = findViewById<Button>(R.id.button1)
+        button1.setOnClickListener {
+            val intent = Intent(this, easymode::class.java)
             startActivity(intent)
         }
-        val button2=findViewById<Button>(R.id.button2)
-        button2.setOnClickListener{
-            val intent= Intent(this,hardmode::class.java)
+        val button2 = findViewById<Button>(R.id.button2)
+        button2.setOnClickListener {
+            val intent = Intent(this, hardmode::class.java)
             startActivity(intent)
         }
+        val button3 = findViewById<Button>(R.id.button3)
+        button3.setOnClickListener {
+            val intent = Intent(this, intermediatemode::class.java)
+            startActivity(intent)
 
 
+        }
     }
 }

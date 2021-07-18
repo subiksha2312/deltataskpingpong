@@ -1,5 +1,6 @@
 package com.example.pingpong
 
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -23,28 +24,29 @@ class hardmode : AppCompatActivity() {
     }
 
     override fun onResume() {
-        mGameBoard.gameOn = true
+        gameOn = true
         super.onResume()
-        Log.d("callingResume","${mGameBoard.gameOn}")
+        Log.d("callingResume","${gameOn}")
         //mGameBoard.start()
     }
 
     override fun onPause() {
-        mGameBoard.gameOn = false
+        gameOn = false
         super.onPause()
-        Log.d("callingPause","${mGameBoard.gameOn}")
+        Log.d("callingPause","${gameOn}")
 
     }
 
     override fun onDestroy() {
-        mGameBoard.gameOn = false
+        gameOn = false
         super.onDestroy()
         Log.d("callingDestroy","callingDestroy")
 
     }
 
     override fun onBackPressed() {
-
+        val intent= Intent(this,MainActivity::class.java)  //Creating an intent so that when the button is clicked,it moves onto another activity
+        startActivity(intent)
     }
 
 
