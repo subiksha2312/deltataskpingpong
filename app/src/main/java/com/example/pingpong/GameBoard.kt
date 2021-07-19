@@ -403,29 +403,6 @@ class GameBoard : View {
         PADDLE_WIDTH = 300F
     }
 
-    fun intermediatemode() {
-        Log.d("random", "$randomint")
-            cxSystempaddle = cxBall - PADDLE_WIDTH / 2f
-            Log.d("hardmode", "not hitting")
-            if (cyBall < PADDLE_HEIGHT + cRadius) {
-                Log.d("cyBall", "check hit")
-                if (cxBall in (cxSystempaddle)..(cxSystempaddle + PADDLE_WIDTH)) {
-                    cyBall = PADDLE_HEIGHT + cRadius
-                    mY *= -1
-                    playpingpongHitSound()
-                    systemscore++
-                    tvSystemscore.setText("$systemscore")
-                    if (score > 5) {
-                        increaseVelocity()
-                        if (score % 5 == 0 || score % 5 == 1) {
-                            increasepanellength()
-                        } else {
-                            PADDLE_WIDTH = 200F
-                        }
-                    }
-                }
-            }
-    }
 
     fun tomovepaddle() {
         if (moveright) {
