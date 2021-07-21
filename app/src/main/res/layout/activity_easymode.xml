@@ -15,7 +15,7 @@
         android:layout_height="100dp"
         android:background="#599ACD"
         android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="8">
 
         <TextView
             android:id="@+id/userscore"
@@ -27,11 +27,19 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/black"/>
 
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="powerup"
+            app:backgroundTint="#3F51B5" />
+
         <TextView
             android:id="@+id/highscore"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:background="#599ACD"
             android:gravity = "center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"

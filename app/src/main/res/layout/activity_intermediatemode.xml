@@ -13,9 +13,9 @@
         android:id="@+id/toplayouteasy"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#00BCD4"
+        android:background="#0A0B0B"
         android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="7">
 
         <TextView
             android:id="@+id/userscore"
@@ -23,9 +23,19 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:background="#599ACD"
-            android:gravity = "center_vertical|center_horizontal"
+            android:gravity="center_vertical|center_horizontal"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/black" />
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="powerup"
+            app:backgroundTint="#3F51B5" />
+
 
         <TextView
             android:id="@+id/systemscore"
@@ -33,7 +43,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:background="#599ACD"
-            android:gravity = "center_vertical|center_horizontal"
+            android:gravity="center_vertical|center_horizontal"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/black" />
     </LinearLayout>

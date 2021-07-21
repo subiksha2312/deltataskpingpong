@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Color.BLUE
 import android.graphics.Paint
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import java.lang.Thread.sleep
@@ -52,6 +54,7 @@ class GameBoard : View {
     private lateinit var tvscore: TextView
     private lateinit var tvhighscore: TextView
     private lateinit var tvSystemscore: TextView
+    private lateinit var tvpowerup: Button
 
     private var mWidth = 0
     private var mHeight = 0
@@ -76,15 +79,13 @@ class GameBoard : View {
 
     constructor (context: Context) : super(context) {
 
-        Log.d("constructor1", "constructor1")
         init(null, context)
 
     }
 
     constructor (context: Context, attrs: AttributeSet) : super(context, attrs) {
-        Log.d("constructor2", "constructor2")
-        init(attrs, context)
 
+        init(attrs, context)
 
     }
 
@@ -116,8 +117,6 @@ class GameBoard : View {
         paintHighScoreText.style = Paint.Style.FILL_AND_STROKE
         paintHighScoreText.textSize = 100F
         paintreplaytext.textSize = 50F
-
-
 
 
         hsPref =
@@ -154,8 +153,6 @@ class GameBoard : View {
         paintreplaytext.textAlign = Paint.Align.CENTER
         paintreplay.textAlign = Paint.Align.CENTER
 
-
-        Log.d("onsizechanged", "starting thread")
         start()
 
 
@@ -164,7 +161,10 @@ class GameBoard : View {
     override fun onDraw(canvas: Canvas) {
 
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paintGameBoard)
-        Log.d("mmode value", "mmode value = $mMode")
+
+        if( score >= 2){
+            tvpowerup.setVisibility(View.VISIBLE)
+        }
 
         if (mMode == "hard" || mMode == "intermediate") {
 
@@ -212,13 +212,6 @@ class GameBoard : View {
                 ((height / 3) + 150).toFloat(),
                 ((width / 2) + 200).toFloat(),
                 ((height / 3) + 225).toFloat(),
-                /*
-                (width / 2).toFloat(),
-                ((height / 3) + 150).toFloat(),
-                ((width / 2) + 180).toFloat(),
-                ((height / 3) + 225).toFloat(),
-
-                 */
                 paintreplay
             )
 
@@ -238,25 +231,43 @@ class GameBoard : View {
                )
            }
            if (mMode == "hard") {
-               canvas?.drawText(
-                   "You lose ://",
-                   (xpos).toFloat(),
-                   (ypos).toFloat(),
-                   paintScoreText
-               )
+               if(score == systemscore ){
+                   canvas?.drawText(
+                       "Draw :|",
+                       (xpos).toFloat(),
+                       (ypos).toFloat(),
+                       paintScoreText
+                   )
+               }
+               else {
+                   canvas?.drawText(
+                       "You lose ://",
+                       (xpos).toFloat(),
+                       (ypos).toFloat(),
+                       paintScoreText
+                   )
+               }
            }
             else if (mMode == "intermediate"){
-                if(score == systemscore){
+                if(score == systemscore ){
                     canvas?.drawText(
-                        "You lose ://",
+                        "Draw :|",
                         (xpos).toFloat(),
                         (ypos).toFloat(),
                         paintScoreText
                     )
                 }
+               if(score > systemscore){
+                   canvas?.drawText(
+                       "You Win :))",
+                       (xpos).toFloat(),
+                       (ypos).toFloat(),
+                       paintScoreText
+                   )
+               }
                else {
                     canvas?.drawText(
-                        "You win :))",
+                        "You lose ://",
                         (xpos).toFloat(),
                         (ypos).toFloat(),
                         paintScoreText
@@ -327,9 +338,6 @@ class GameBoard : View {
         GameThread().start()
     }
 
-    fun stop() {
-        gameOn = false
-    }
 
 
     fun resetGame() {
@@ -348,7 +356,7 @@ class GameBoard : View {
         mY = 5F
         score = 0
         systemscore = 0
-        if (mMode == "hard") {
+        if (mMode == "hard"|| mMode =="intermediate ") {
             tvSystemscore.setText("$systemscore")
         }
         tvscore.setText("$score")
@@ -361,6 +369,10 @@ class GameBoard : View {
 
     fun playpingpongFailSound() {
         soundPoolFailure.play(failureSound, 1f, 1f, 1, 0, 2f)
+    }
+
+    fun playpingpongpowerupsound(){
+        soundPoolPowerup.play(powerupsound, 1f, 1f, 1, 0, 2f)
     }
 
     fun increaseVelocity() {
@@ -400,7 +412,13 @@ class GameBoard : View {
     }
 
     fun increasepanellength() {
-        PADDLE_WIDTH = 300F
+
+        playpingpongpowerupsound()
+        if (score >= 2) {
+            if (score % 5 == 0 || score % 5 == 2 || score % 5 ==4) {
+                PADDLE_WIDTH = 300F
+            }
+        }
     }
 
 
@@ -412,9 +430,6 @@ class GameBoard : View {
             cxSystempaddle -= 15
         }
 
-        Log.d("movepaddle1","$cxSystempaddle")
-        Log.d("movepaddle2","$mWidth")
-        Log.d("movepaddle3","$PADDLE_WIDTH")
         if (cxSystempaddle >= (mWidth - PADDLE_WIDTH).toFloat()) {
             moveright = false
         }
@@ -426,59 +441,69 @@ class GameBoard : View {
     }
 
 
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (mMode == "easy") {
             tvhighscore = (parent as View).findViewById(R.id.highscore) as TextView
             tvscore = (parent as View).findViewById(R.id.userscore) as TextView
+            tvpowerup = (parent as View).findViewById(R.id.button4) as Button
             tvhighscore.setText("High score is:$mAllTimeHighScore")
             tvscore.setText("$score")
 
         } else if (mMode == "hard" || mMode == "intermediate") {
             tvSystemscore = (parent as View).findViewById(R.id.systemscore) as TextView
             tvscore = (parent as View).findViewById(R.id.userscore) as TextView
+            tvpowerup = (parent as View).findViewById(R.id.button) as Button
             tvscore.setText("$score")
             tvSystemscore.setText("$systemscore")
+        }
+
+        tvpowerup.setVisibility(View.INVISIBLE)
+
+        tvpowerup.setOnClickListener(){
+
+            increasepanellength()
         }
     }
 
     inner class GameThread : Thread() {
         override fun run() {
-            Log.d("thread", "starting thread")
+
             randomint = (1..2).random()
-           // tvSystemscore.setText("$randomint")
             while (gameOn) {
-                Log.d("beginloop", "thread execution $name")
                 cxBall += mX
                 cyBall += mY
+
+
 
                 if (mMode == "intermediate") {
                     if (randomint == 2 || randomint == 1)  {
                         tomovepaddle()
                         if (cyBall < PADDLE_HEIGHT + cRadius) {
-                            Log.d("cyBall", "check hit")
                             if (cxBall in (cxSystempaddle)..(cxSystempaddle + PADDLE_WIDTH)) {
                                 cyBall = PADDLE_HEIGHT + cRadius
                                 mY *= -1
                                 playpingpongHitSound()
-                                systemscore++
-                                tvSystemscore.setText("$systemscore")
                                 if (score > 5) {
                                     increaseVelocity()
-                                    if (score % 5 == 0 || score % 5 == 1) {
-                                        increasepanellength()
-                                    } else {
+                                    if (score % 5 != 0 || score % 5 != 1 || score % 5 !=2) {
                                         PADDLE_WIDTH = 200F
                                     }
                                 }
 
                             }
                         }
-
-                         if (cyBall < cRadius) {
-                            playpingpongFailSound()
-                            gameOn = false
-                            gameEnd = true
+                         if (cyBall > mHeight-cRadius) {
+                             mY*=-1
+                             playpingpongHitSound()
+                             systemscore++
+                             tvSystemscore.setText("$systemscore")
+                             if(systemscore ==10 || score==10) {
+                                 gameOn = false
+                                 gameEnd = true
+                                 playpingpongFailSound()
+                             }
                         }
 
                     }
@@ -486,25 +511,32 @@ class GameBoard : View {
                     if (mMode == "hard") {
                         if (mY < 0) {
                             cxSystempaddle = cxBall - PADDLE_WIDTH / 2f
-                            Log.d("hardmode", "not hitting")
                             if (cyBall < PADDLE_HEIGHT + cRadius) {
-                                Log.d("cyBall", "check hit")
                                 if (cxBall in (cxSystempaddle)..(cxSystempaddle + PADDLE_WIDTH)) {
                                     cyBall = PADDLE_HEIGHT + cRadius
                                     mY *= -1
                                     playpingpongHitSound()
-                                    systemscore++
-                                    tvSystemscore.setText("$systemscore")
                                     if (score > 5) {
                                         increaseVelocity()
-                                        if (score % 5 == 0 || score % 5 == 1) {
-                                            increasepanellength()
-                                        } else {
+                                        if (score % 5 != 0 || score % 5 != 2 || score %5 !=4) {
                                             PADDLE_WIDTH = 200F
                                         }
                                     }
 
                                 }
+                            }
+
+
+                        }
+                        if (cyBall > mHeight-cRadius) {
+                            mY*=-1
+                            playpingpongHitSound()
+                            systemscore++
+                            tvSystemscore.setText("$systemscore")
+                            if(systemscore ==10 || score==10) {
+                                gameOn = false
+                                gameEnd = true
+                                playpingpongFailSound()
                             }
                         }
                     }
@@ -513,7 +545,8 @@ class GameBoard : View {
                         playpingpongHitSound()
                         cxBall = mWidth - cRadius
                         mX *= -1
-                    } else if (cxBall < cRadius) // ball hitting left side of the screen
+                    }
+                    else if (cxBall < cRadius) // ball hitting left side of the screen
                     {
                         playpingpongHitSound()
                         cxBall = cRadius
@@ -526,30 +559,39 @@ class GameBoard : View {
                             playpingpongHitSound()
                             cyBall = mHeight - cRadius - PADDLE_HEIGHT
                             mY *= -1
-                            if (mMode == "hard" || mMode == "intermediate") {
-                                score++
-                                tvscore.setText("$score")
-                            }
-                        } else   //losing the game
-                        {
-                            playpingpongFailSound()
+                        }
+                        else   //losing the game
+                         {  if(mMode == "easy" ) {
                             gameOn = false
                             gameEnd = true
+                            playpingpongFailSound()
+                        }
+                             else(mMode =="intermediate"|| mMode =="hard"){
+                                 if(cxBall < cxPaddle - cRadius) {
+                                     playpingpongHitSound()
+                                     cyBall = cRadius
+                                     mY *= -1
+                                 }
+                                 if( score == 10|| systemscore== 10){
+                                     gameOn = false
+                                     gameEnd = true
+                                     playpingpongFailSound()
+                                 }
+                         }
+
                         }
                     } else if (cyBall < cRadius)  //hitting top part of screen
                     {
                         playpingpongHitSound()
                         cyBall = cRadius
                         mY *= -1
-                        if (mMode == "easy") {
+                        if (mMode == "easy"|| mMode =="intermediate") {
                             score++
                             tvscore.setText("$score")
                         }
                         if (score > 5) {
                             increaseVelocity()
-                            if (score % 5 == 0 || score % 5 == 1) {
-                                increasepanellength()
-                            } else {
+                            if (score % 5 != 0 || score % 5 != 2||score % 5 !=4) {
                                 PADDLE_WIDTH = 200F
                             }
                         }
@@ -561,5 +603,9 @@ class GameBoard : View {
             }
         }
     }
+
+private operator fun Boolean.invoke(value: Any) {
+
+}
 
 
