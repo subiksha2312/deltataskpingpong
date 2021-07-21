@@ -37,6 +37,7 @@ class GameBoard : View {
     private val paintpaddle2: Paint = Paint()
 
     private var PADDLE_WIDTH = 200F
+    private val SYSTEMPADDLE_WIDTH = 200F
     private val PADDLE_HEIGHT = 50F
     private var cxPaddle = 0F
     private var cxTouch = 0F
@@ -141,7 +142,7 @@ class GameBoard : View {
         cxBall = (Random.nextInt(1, mWidth)).toFloat()
         cyBall = (mHeight / 6).toFloat()
         cxPaddle = (width / 2 - PADDLE_WIDTH / 2).toFloat()
-        cxSystempaddle = (width / 2 - PADDLE_WIDTH / 2).toFloat()
+        cxSystempaddle = (width / 2 - SYSTEMPADDLE_WIDTH / 2).toFloat()
         paintScoreText.textSize = height / 20f
         paintHighScoreText.textSize = height / 20f
 
@@ -162,7 +163,7 @@ class GameBoard : View {
 
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paintGameBoard)
 
-        if( score >= 2){
+        if( score >= 5){
             tvpowerup.setVisibility(View.VISIBLE)
         }
 
@@ -413,12 +414,22 @@ class GameBoard : View {
 
     fun increasepanellength() {
 
+        if(mMode =="hard"){
+            if (systemscore >= 5) {
+                if (systemscore % 5 == 0 || systemscore % 5 == 2 || systemscore % 5 == 4 ) {
+                    PADDLE_WIDTH = 300F
+                }
+            }
+
+        }
+
         playpingpongpowerupsound()
-        if (score >= 2) {
-            if (score % 5 == 0 || score % 5 == 2 || score % 5 ==4) {
+        if (score >= 5) {
+            if (score % 5 == 1 || score % 5 == 3  || systemscore % 5 == 4 ) {
                 PADDLE_WIDTH = 300F
             }
         }
+
     }
 
 
@@ -481,7 +492,7 @@ class GameBoard : View {
                     if (randomint == 2 || randomint == 1)  {
                         tomovepaddle()
                         if (cyBall < PADDLE_HEIGHT + cRadius) {
-                            if (cxBall in (cxSystempaddle)..(cxSystempaddle + PADDLE_WIDTH)) {
+                            if (cxBall in (cxSystempaddle)..(cxSystempaddle + SYSTEMPADDLE_WIDTH)) {
                                 cyBall = PADDLE_HEIGHT + cRadius
                                 mY *= -1
                                 playpingpongHitSound()
@@ -510,7 +521,7 @@ class GameBoard : View {
                 }
                     if (mMode == "hard") {
                         if (mY < 0) {
-                            cxSystempaddle = cxBall - PADDLE_WIDTH / 2f
+                            cxSystempaddle = cxBall - SYSTEMPADDLE_WIDTH / 2f
                             if (cyBall < PADDLE_HEIGHT + cRadius) {
                                 if (cxBall in (cxSystempaddle)..(cxSystempaddle + PADDLE_WIDTH)) {
                                     cyBall = PADDLE_HEIGHT + cRadius
