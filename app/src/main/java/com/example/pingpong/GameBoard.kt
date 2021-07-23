@@ -162,9 +162,13 @@ class GameBoard : View {
     override fun onDraw(canvas: Canvas) {
 
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paintGameBoard)
-
-        if( score >= 5){
-            tvpowerup.setVisibility(View.VISIBLE)
+        if(score >= 5) {
+            if (score % 5 == 0 || score % 5 == 2 || score % 5 == 4) {
+                tvpowerup.setVisibility(View.VISIBLE)
+            }
+            else {
+                tvpowerup.setVisibility(View.INVISIBLE)
+            }
         }
 
         if (mMode == "hard" || mMode == "intermediate") {
@@ -357,10 +361,14 @@ class GameBoard : View {
         mY = 5F
         score = 0
         systemscore = 0
+        tvpowerup.setVisibility(View.INVISIBLE)
         if (mMode == "hard"|| mMode =="intermediate ") {
             tvSystemscore.setText("$systemscore")
         }
         tvscore.setText("$score")
+        if(score > mAllTimeHighScore){
+            tvhighscore.setText("High score is $score")
+        }
         invalidate()
     }
 
@@ -425,7 +433,7 @@ class GameBoard : View {
 
         playpingpongpowerupsound()
         if (score >= 5) {
-            if (score % 5 == 1 || score % 5 == 3  || systemscore % 5 == 4 ) {
+            if (score % 5 == 0 || score % 5 == 2  || systemscore % 5 == 4 ) {
                 PADDLE_WIDTH = 300F
             }
         }
@@ -473,7 +481,6 @@ class GameBoard : View {
         tvpowerup.setVisibility(View.INVISIBLE)
 
         tvpowerup.setOnClickListener(){
-
             increasepanellength()
         }
     }
