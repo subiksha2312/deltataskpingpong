@@ -162,9 +162,26 @@ class GameBoard : View {
     override fun onDraw(canvas: Canvas) {
 
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paintGameBoard)
+
+        if(mMode =="hard") {
+            if (systemscore >= 5) {
+                if (systemscore % 5 == 0 || systemscore % 5 == 2 || systemscore % 5 == 4) {
+                    tvpowerup.setVisibility(View.VISIBLE)
+                }
+                else {
+                    tvpowerup.setVisibility(View.INVISIBLE)
+                    PADDLE_WIDTH = 200F
+                }
+            }
+            else {
+                tvpowerup.setVisibility(View.INVISIBLE)
+            }
+        }
         if(score >= 5) {
-            if (score % 5 == 0 || score % 5 == 2 || score % 5 == 4) {
-                tvpowerup.setVisibility(View.VISIBLE)
+            if(mMode=="intermerdiate" || mMode =="easy") {
+                if (score % 5 == 0 || score % 5 == 2 || score % 5 == 4) {
+                    tvpowerup.setVisibility(View.VISIBLE)
+                }
             }
             else {
                 tvpowerup.setVisibility(View.INVISIBLE)
@@ -176,7 +193,7 @@ class GameBoard : View {
             canvas?.drawRect(
                 cxSystempaddle,
                 0f,
-                cxSystempaddle + PADDLE_WIDTH,
+                cxSystempaddle + SYSTEMPADDLE_WIDTH,
                 PADDLE_HEIGHT, paintpaddle2
             )
 
@@ -427,13 +444,15 @@ class GameBoard : View {
                 if (systemscore % 5 == 0 || systemscore % 5 == 2 || systemscore % 5 == 4 ) {
                     PADDLE_WIDTH = 300F
                 }
+                else {
+                    PADDLE_WIDTH =200F
+                }
             }
 
         }
-
         playpingpongpowerupsound()
         if (score >= 5) {
-            if (score % 5 == 0 || score % 5 == 2  || systemscore % 5 == 4 ) {
+            if (score % 5 == 0 || score % 5 == 2  || score % 5 == 4 ) {
                 PADDLE_WIDTH = 300F
             }
         }
