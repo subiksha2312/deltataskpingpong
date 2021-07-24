@@ -2,4 +2,6 @@
     <string name="app_name">PingPong</string>
     <string name="HighScoreKey">PingPong.HighScoreKey</string>
     <string name="HighScore">PingPong.HighScore</string>
+    <string name="dialogTitle">Go back?</string>
+    <string name="dialogMessage">Are you sure you want to exit?</string>
 </resources>

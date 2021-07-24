@@ -14,9 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 var pingponghitSound = 0
 var failureSound = 0
 var powerupsound = 0
+var systemloss= 0
 lateinit var soundPoolBallHit : SoundPool
 lateinit var soundPoolFailure : SoundPool
 lateinit var soundPoolPowerup : SoundPool
+lateinit var soundPoolsystemloss: SoundPool
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,17 +41,20 @@ class MainActivity : AppCompatActivity() {
             soundPoolBallHit = builder.build()
             soundPoolFailure = builder.build()
             soundPoolPowerup = builder.build()
+            soundPoolsystemloss = builder.build()
 
         } else {
             soundPoolBallHit = SoundPool(6, AudioManager.STREAM_MUSIC, 0)
             soundPoolFailure = SoundPool(6, AudioManager.STREAM_MUSIC, 0)
             soundPoolPowerup = SoundPool(6, AudioManager.STREAM_MUSIC, 0)
+            soundPoolsystemloss= SoundPool(6, AudioManager.STREAM_MUSIC, 0)
         }
 
 
         pingponghitSound = soundPoolBallHit.load(this, R.raw.pingponghit, 1)
         failureSound = soundPoolFailure.load(this, R.raw.failbuzzer, 1)
         powerupsound = soundPoolPowerup.load(this, R.raw.powerupsound, 1)
+        systemloss = soundPoolsystemloss.load(this, R.raw.systemlosing, 1)
 
 
         val button1 = findViewById<Button>(R.id.button1)
@@ -70,4 +75,9 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    override fun onBackPressed() {
+
+    }
+
 }

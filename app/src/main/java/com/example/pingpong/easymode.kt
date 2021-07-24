@@ -9,7 +9,10 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 
 
 class easymode : AppCompatActivity() {
@@ -49,9 +52,32 @@ class easymode : AppCompatActivity() {
 
     }
 
+
+
+
     override fun onBackPressed() {
-        val intent= Intent(this,MainActivity::class.java)
-        startActivity(intent)
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.dialogTitle)
+            builder.setMessage(R.string.dialogMessage)
+
+            builder.setPositiveButton("Yes") { dialogInterface, which ->
+                Toast.makeText(applicationContext, "going back", Toast.LENGTH_LONG).show()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            builder.setNegativeButton("No"){dialogInterface, which ->
+            Toast.makeText(applicationContext,"continue playing",Toast.LENGTH_LONG).show()
+            }
+
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+
+
     }
 
 

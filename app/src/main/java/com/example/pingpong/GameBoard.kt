@@ -378,11 +378,14 @@ class GameBoard : View {
         mY = 5F
         score = 0
         systemscore = 0
+
         tvpowerup.setVisibility(View.INVISIBLE)
-        if (mMode == "hard"|| mMode =="intermediate ") {
+        if (mMode == "hard"|| mMode =="intermediate") {
             tvSystemscore.setText("$systemscore")
         }
+
         tvscore.setText("$score")
+
         if(score > mAllTimeHighScore){
             tvhighscore.setText("High score is $score")
         }
@@ -399,6 +402,10 @@ class GameBoard : View {
 
     fun playpingpongpowerupsound(){
         soundPoolPowerup.play(powerupsound, 1f, 1f, 1, 0, 2f)
+    }
+
+    fun playpingpongsystemlosssound() {
+        soundPoolsystemloss.play(systemloss, 1f, 1f, 1, 0, 2f)
     }
 
     fun increaseVelocity() {
@@ -532,8 +539,10 @@ class GameBoard : View {
                             }
                         }
                          if (cyBall > mHeight-cRadius) {
-                             mY*=-1
-                             playpingpongHitSound()
+                             cyBall = PADDLE_HEIGHT + cRadius
+                             cxBall = (Random.nextInt(1, mWidth)).toFloat()
+                             mY *= -1
+                             playpingpongFailSound()
                              systemscore++
                              tvSystemscore.setText("$systemscore")
                              if(systemscore ==10 || score==10) {
@@ -566,8 +575,10 @@ class GameBoard : View {
 
                         }
                         if (cyBall > mHeight-cRadius) {
-                            mY*=-1
-                            playpingpongHitSound()
+                            cyBall = PADDLE_HEIGHT + cRadius
+                            cxBall = (Random.nextInt(1, mWidth)).toFloat()
+                            mY *= -1
+                            playpingpongFailSound()
                             systemscore++
                             tvSystemscore.setText("$systemscore")
                             if(systemscore ==10 || score==10) {
@@ -619,10 +630,14 @@ class GameBoard : View {
                         }
                     } else if (cyBall < cRadius)  //hitting top part of screen
                     {
-                        playpingpongHitSound()
                         cyBall = cRadius
                         mY *= -1
+                        if(mMode == "hard" || mMode == "intermediate"){
+                            playpingpongsystemlosssound()
+                        }
+
                         if (mMode == "easy"|| mMode =="intermediate") {
+                            playpingpongHitSound()
                             score++
                             tvscore.setText("$score")
                         }

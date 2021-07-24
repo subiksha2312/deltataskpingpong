@@ -9,6 +9,9 @@
     android:screenOrientation="portrait"
     tools:context=".MainActivity">
 
+
+
+
     <LinearLayout
         android:id="@+id/easymodelayout"
         android:layout_width="match_parent"
