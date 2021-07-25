@@ -6,17 +6,18 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:noHistory="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:noHistory ="true"
         android:theme="@style/Theme.PingPong">
-        <activity android:name=".intermediatemode"></activity>
+
+        <activity android:name=".intermediatemode" />
         <activity android:name=".hardmode" />
         <activity android:name=".easymode" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -117,7 +117,7 @@ class GameBoard : View {
         paintSystemScoreText.textSize = 100F
         paintHighScoreText.style = Paint.Style.FILL_AND_STROKE
         paintHighScoreText.textSize = 100F
-        paintreplaytext.textSize = 50F
+
 
 
         hsPref =
